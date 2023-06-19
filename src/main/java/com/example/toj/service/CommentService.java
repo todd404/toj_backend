@@ -6,6 +6,7 @@ import com.example.toj.pojo.ParentComment;
 import com.example.toj.pojo.SubComment;
 import com.example.toj.pojo.User;
 import com.example.toj.pojo.request.commentRequest.SubmitCommentRequest;
+import com.example.toj.pojo.response.BaseResponse;
 import com.example.toj.pojo.response.commentResponse.*;
 import com.example.toj.pojo.response.object.MessageItem;
 import com.example.toj.pojo.response.object.SubmitCommentData;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class CommentService {
@@ -108,6 +110,43 @@ public class CommentService {
         }
 
         response.setMessages(messageItems);
+        response.setSuccess(true);
+
+        return response;
+    }
+
+    public BaseResponse setCommentRead(Integer commentId, User user) {
+        BaseResponse response = new BaseResponse();
+        //防止滥用该接口，导致可以其他用户设置本用户的已读
+        Boolean isUserNoReadFlag = false;
+
+        List<MessageItem> messages = commentMapper.queryNoReadMessages(user.getId());
+        if(messages == null){
+            response.setSuccess(false);
+            response.setMessage("设置回复已读失败: 未知错误");
+            return response;
+        }
+
+        for(var m : messages){
+            if(Objects.equals(commentId, m.getId())){
+                isUserNoReadFlag = true;
+                break;
+            }
+        }
+
+        if(!isUserNoReadFlag){
+            response.setSuccess(false);
+            response.setMessage("设置回复已读失败: 非本用户的未读消息，或消息已设置已读");
+            return response;
+        }
+
+        Integer result = commentMapper.updateCommentRead(commentId);
+        if(result == 0){
+            response.setSuccess(false);
+            response.setMessage("设置回复已读失败: 未知错误");
+            return response;
+        }
+
         response.setSuccess(true);
 
         return response;
