@@ -34,7 +34,7 @@ public class ParentComment {
 
     public void setUserId(Integer userId) {
         this.userId = userId;
-        this.avatar = "/avatar/%d.png".formatted(id);
+        this.avatar = "/avatar/%d.png".formatted(userId);
     }
 
     public String getUsername() {
