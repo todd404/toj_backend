@@ -1,6 +1,7 @@
 package com.example.toj.controller;
 
 import com.example.toj.pojo.User;
+import com.example.toj.pojo.response.problemResponse.HistoryResponse;
 import com.example.toj.pojo.response.problemResponse.ProblemResponse;
 import com.example.toj.pojo.response.problemResponse.ProblemSetResponse;
 import com.example.toj.service.ProblemService;
@@ -32,5 +33,20 @@ public class ProblemController {
     @GetMapping("/problem")
     public ProblemResponse problem(@RequestParam("problem_id") Integer problemId){
         return problemService.getProblem(problemId);
+    }
+
+    @GetMapping("/history")
+    public HistoryResponse history(@RequestParam("problem_id") Integer problemId,
+                                   HttpSession session)
+    {
+        User user = (User) session.getAttribute("user");
+        if(user == null){
+            HistoryResponse response = new HistoryResponse();
+            response.setSuccess(false);
+            response.setMessage("获取提交记录失败: 未登录");
+            return response;
+        }
+
+        return problemService.getSubmitHistory(problemId, user);
     }
 }

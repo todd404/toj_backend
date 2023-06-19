@@ -1,16 +1,24 @@
 package com.example.toj.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.sql.Date;
 
 public class History {
     private Integer id = -1;
     private Integer userId = -1;
+    @JsonProperty("problem_id")
     private Integer problemId = -1;
     private String language = "";
+    @JsonIgnore
     private String code = "";
+    @JsonProperty("execute_time")
     private Integer executeTime = -1;
     private Integer memory = -1;
+    @JsonProperty("status")
     private String result = "";
+    @JsonProperty("submit_time")
     private Date createdAt = new Date(0);
 
     public Integer getId() {

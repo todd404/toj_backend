@@ -17,13 +17,13 @@ public class ProblemTest {
 
     @Test
     void getUserAllPassedHistoryTest(){
-        var result = problemMapper.getUserPassedHistory(2);
+        var result = problemMapper.queryUserPassedHistory(2);
         return;
     }
 
     @Test
     void getAllProblemPassRate(){
-        var result = problemMapper.getAllProblemPassRate();
+        var result = problemMapper.queryAllProblemPassRate();
         return;
     }
 

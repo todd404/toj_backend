@@ -5,6 +5,7 @@ import com.example.toj.pojo.History;
 import com.example.toj.pojo.PassRate;
 import com.example.toj.pojo.Problem;
 import com.example.toj.pojo.User;
+import com.example.toj.pojo.response.problemResponse.HistoryResponse;
 import com.example.toj.pojo.response.problemResponse.ProblemResponse;
 import com.example.toj.pojo.response.problemResponse.ProblemSetResponse;
 import com.example.toj.pojo.response.object.ProblemSetItem;
@@ -26,7 +27,7 @@ public class ProblemService {
     }
 
     public ProblemResponse getProblem(Integer problemId){
-        var problem = problemMapper.getProblem(problemId);
+        var problem = problemMapper.queryProblem(problemId);
         ProblemResponse response = new ProblemResponse();
         if(problem == null){
             response.setSuccess(false);
@@ -42,9 +43,9 @@ public class ProblemService {
     public ProblemSetResponse getProblemSet(User user){
         ProblemSetResponse response = new ProblemSetResponse();
 
-        List<Problem> allProblem = problemMapper.getAllProblems();
-        List<History> userPassedHistory = problemMapper.getUserPassedHistory(user.getId());
-        List<PassRate> allProblemPassRate = problemMapper.getAllProblemPassRate();
+        List<Problem> allProblem = problemMapper.queryAllProblems();
+        List<History> userPassedHistory = problemMapper.queryUserPassedHistory(user.getId());
+        List<PassRate> allProblemPassRate = problemMapper.queryAllProblemPassRate();
 
         Map<Integer, ProblemSetItem> problemSetItemMap = new HashMap<>();
         for(var p : allProblem){
@@ -77,6 +78,22 @@ public class ProblemService {
 
         response.setProblemSetItemList(problemSet);
         response.setSuccess(true);
+
+        return response;
+    }
+
+    public HistoryResponse getSubmitHistory(Integer problemId, User user){
+        List<History> historyList = problemMapper.querySubmitHistory(problemId, user.getId());
+        HistoryResponse response = new HistoryResponse();
+
+        if(historyList == null){
+            response.setSuccess(false);
+            response.setMessage("获取提交记录失败: 未知原因");
+            return response;
+        }
+
+        response.setSuccess(true);
+        response.setData(historyList);
 
         return response;
     }
