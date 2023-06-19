@@ -1,4 +1,4 @@
-package com.example.toj.pojo.response;
+package com.example.toj.pojo.response.problemResponse;
 
 import com.example.toj.pojo.Problem;
 

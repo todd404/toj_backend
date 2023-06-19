@@ -18,7 +18,6 @@ public class SubComment {
 
     public void setId(Integer id) {
         this.id = id;
-        this.userAvatar = "/avatar/%d.png".formatted(id);
     }
 
     public Integer getUserId() {
@@ -27,6 +26,7 @@ public class SubComment {
 
     public void setUserId(Integer userId) {
         this.userId = userId;
+        this.userAvatar = "/avatar/%d.png".formatted(id);
     }
 
     public String getUserName() {

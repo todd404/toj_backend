@@ -1,14 +1,13 @@
 package com.example.toj.controller;
 
 import com.example.toj.pojo.User;
-import com.example.toj.pojo.request.AccountRequest;
-import com.example.toj.pojo.request.EditUserInfoRequest;
+import com.example.toj.pojo.request.userRequset.AccountRequest;
+import com.example.toj.pojo.request.userRequset.EditUserInfoRequest;
 import com.example.toj.pojo.response.BaseResponse;
 import com.example.toj.pojo.response.UserInfoResponse;
 import com.example.toj.pojo.response.object.UserInfo;
 import com.example.toj.service.UserService;
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;

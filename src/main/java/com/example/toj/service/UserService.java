@@ -2,7 +2,7 @@ package com.example.toj.service;
 
 import com.example.toj.mapper.UserMapper;
 import com.example.toj.pojo.User;
-import com.example.toj.pojo.request.EditUserInfoRequest;
+import com.example.toj.pojo.request.userRequset.EditUserInfoRequest;
 import com.example.toj.pojo.response.BaseResponse;
 import com.example.toj.service.storage.TempFileStorageService;
 import org.springframework.beans.factory.annotation.Autowired;

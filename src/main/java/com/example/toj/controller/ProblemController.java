@@ -1,9 +1,8 @@
 package com.example.toj.controller;
 
-import com.example.toj.pojo.Problem;
 import com.example.toj.pojo.User;
-import com.example.toj.pojo.response.ProblemResponse;
-import com.example.toj.pojo.response.ProblemSetResponse;
+import com.example.toj.pojo.response.problemResponse.ProblemResponse;
+import com.example.toj.pojo.response.problemResponse.ProblemSetResponse;
 import com.example.toj.service.ProblemService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
