@@ -12,13 +12,13 @@ import java.util.List;
 @Mapper
 public interface ProblemMapper {
 
-    @Select("select * from problem")
+    @Select("select * from problem where id > 0")
     List<Problem> getAllProblems();
 
-    @Select("select * from problem where id = #{problemId}")
+    @Select("select * from problem where id = #{problemId} and id > 0")
     Problem getProblem(@Param("problemId") Integer problemId);
 
-    @Select("select * from history where user_id=#{userId} and result=\"通过\"")
+    @Select("select * from history where user_id=#{userId} and result=\"通过\" and id > 0")
     List<History> getUserPassedHistory(@Param("userId") Integer userId);
 
     @Select("select problem_id, sum(result=\"通过\") / count(*) as pass_rate from history group by problem_id")
