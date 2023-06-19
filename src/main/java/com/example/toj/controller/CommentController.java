@@ -3,6 +3,7 @@ package com.example.toj.controller;
 import com.example.toj.pojo.User;
 import com.example.toj.pojo.request.commentRequest.CommentLikeRequest;
 import com.example.toj.pojo.request.commentRequest.SubmitCommentRequest;
+import com.example.toj.pojo.response.BaseResponse;
 import com.example.toj.pojo.response.commentResponse.*;
 import com.example.toj.service.CommentService;
 import jakarta.servlet.http.HttpSession;
@@ -72,5 +73,17 @@ public class CommentController {
         }
 
         return commentService.getMessages(user);
+    }
+
+    @GetMapping("/comment-read")
+    public BaseResponse commentRead(@RequestParam("comment_id") Integer commentId,
+                                    HttpSession session)
+    {
+        User user = (User) session.getAttribute("user");
+        if(user == null){
+            return new BaseResponse(false, "未登录");
+        }
+
+        return commentService.setCommentRead(commentId, user);
     }
 }

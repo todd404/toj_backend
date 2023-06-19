@@ -67,4 +67,7 @@ public interface CommentMapper {
             and is_read = false;
             """)
     List<MessageItem> queryNoReadMessages(@Param("userId") Integer userId);
+
+    @Update("update comment set is_read = true where id=#{commentId}")
+    Integer updateCommentRead(@Param("commentId") Integer commentId);
 }
