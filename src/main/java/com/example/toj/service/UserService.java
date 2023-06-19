@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
@@ -59,20 +60,29 @@ public class UserService {
 
     public BaseResponse editUserInfo(EditUserInfoRequest request, User loginUser){
         BaseResponse response = new BaseResponse();
+        StringBuilder resultMessage = new StringBuilder();
+        boolean resultSuccess = true;
 
         if(!request.getOldPassword().isEmpty() && !request.getNewPassword().isEmpty()){
             var count = userMapper.updatePassword(loginUser.getId(), request.getOldPassword(), request.getNewPassword());
             if(count > 0){
-                response.setSuccess(true);
-                response.setMessage("修改密码成功！");
+                resultMessage.append("修改密码成功!\n");
+            }else{
+                resultSuccess = false;
+                resultMessage.append("修改密码失败：旧密码不正确\n");
             }
         }if(!request.getAvatarUuid().isEmpty()){
-            tempFileStorageService.copyToAvatar(request.getAvatarUuid(), String.valueOf(loginUser.getId()));
-            response.setSuccess(true);
-            var message = response.getMessage() + "\n头像修改成功";
-            response.setMessage(message.trim());
+            try {
+                tempFileStorageService.copyToAvatar(request.getAvatarUuid(), String.valueOf(loginUser.getId()));
+            } catch (IOException e) {
+                resultSuccess = false;
+                resultMessage.append("修改头像失败!\n");
+            }
+            resultMessage.append("修改头像成功!\n");
         }
 
+        response.setSuccess(resultSuccess);
+        response.setMessage(resultMessage.toString().trim());
         return response;
     }
 
