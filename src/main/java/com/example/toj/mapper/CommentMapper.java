@@ -56,5 +56,6 @@ public interface CommentMapper {
 
     @Insert("insert into comment (user_id, problem_id, parent_id, content, is_read) " +
             "VALUES (#{userId}, #{problemId}, #{parentId}, #{content}, false)")
+    @Options(keyProperty = "id", useGeneratedKeys = true)
     Integer insertComment(Comment comment);
 }
