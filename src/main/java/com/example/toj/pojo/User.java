@@ -7,6 +7,7 @@ public class User {
     @JsonProperty("userid")
     private Integer id = -1;
     private String username = "";
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password = "";
     @JsonIgnore
     private Boolean isAdmin = false;
@@ -27,7 +28,6 @@ public class User {
         this.username = username;
     }
 
-    @JsonIgnore
     public String getPassword() {
         return password;
     }
