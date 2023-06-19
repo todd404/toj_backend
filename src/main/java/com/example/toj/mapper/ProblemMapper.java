@@ -3,10 +3,7 @@ package com.example.toj.mapper;
 import com.example.toj.pojo.History;
 import com.example.toj.pojo.PassRate;
 import com.example.toj.pojo.Problem;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -31,4 +28,11 @@ public interface ProblemMapper {
             """)
     List<History> querySubmitHistory(@Param("problemId") Integer problemId,
                                      @Param("userId") Integer userId);
+
+    @Insert("insert into problem (title, content, difficulty) values (#{title}, #{content}, #{difficulty})")
+    @Options(useGeneratedKeys = true, keyProperty = "id")
+    Integer insertProblem(Problem problem);
+
+    @Update("update problem set title=#{title}, content=#{content}, difficulty=#{difficulty} where id = #{id}")
+    Integer updateProblem(Problem problem);
 }

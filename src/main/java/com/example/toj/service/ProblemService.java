@@ -5,25 +5,35 @@ import com.example.toj.pojo.History;
 import com.example.toj.pojo.PassRate;
 import com.example.toj.pojo.Problem;
 import com.example.toj.pojo.User;
+import com.example.toj.pojo.request.problemRequest.ProblemRequest;
+import com.example.toj.pojo.response.BaseResponse;
 import com.example.toj.pojo.response.problemResponse.HistoryResponse;
 import com.example.toj.pojo.response.problemResponse.ProblemResponse;
 import com.example.toj.pojo.response.problemResponse.ProblemSetResponse;
 import com.example.toj.pojo.response.object.ProblemSetItem;
+import com.example.toj.service.storage.TempFileStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import java.beans.Transient;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Service
+@Transactional
 public class ProblemService {
     final ProblemMapper problemMapper;
+    final TempFileStorageService tempFileStorageService;
 
     @Autowired
-    public ProblemService(ProblemMapper problemMapper) {
+    public ProblemService(ProblemMapper problemMapper, TempFileStorageService tempFileStorageService) {
         this.problemMapper = problemMapper;
+        this.tempFileStorageService = tempFileStorageService;
     }
 
     public ProblemResponse getProblem(Integer problemId){
@@ -95,6 +105,56 @@ public class ProblemService {
         response.setSuccess(true);
         response.setData(historyList);
 
+        return response;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public BaseResponse adminAddProblem(ProblemRequest problemRequest) {
+        Integer result = problemMapper.insertProblem(problemRequest);
+        BaseResponse response = new BaseResponse();
+
+        if(result == null || result == 0){
+            response.setMessage("添加问题失败: 未知原因");
+            response.setSuccess(false);
+            return response;
+        }
+
+        try{
+            tempFileStorageService.copyToTest(problemRequest.getTestFileUuid(), problemRequest.getId());
+            tempFileStorageService.copyToAnswer(problemRequest.getAnswerFileUuid(), problemRequest.getId());
+        } catch (IOException e) {
+            response.setSuccess(false);
+            response.setMessage("添加问题失败: 添加答案、测试文件失败");
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return response;
+        }
+
+        response.setSuccess(true);
+        return response;
+    }
+
+    public BaseResponse adminEditProblem(ProblemRequest problemRequest){
+        Integer result = problemMapper.updateProblem(problemRequest);
+        BaseResponse response = new BaseResponse();
+
+        if(result == null || result == 0){
+            response.setMessage("编辑问题失败: 未知原因");
+            response.setSuccess(false);
+            return response;
+        }
+        if(!problemRequest.getAnswerFileUuid().isEmpty() && !problemRequest.getTestFileUuid().isEmpty()){
+            try{
+                tempFileStorageService.copyToTest(problemRequest.getTestFileUuid(), problemRequest.getId());
+                tempFileStorageService.copyToAnswer(problemRequest.getAnswerFileUuid(), problemRequest.getId());
+            } catch (IOException e) {
+                response.setSuccess(false);
+                response.setMessage("编辑问题失败: 修改答案、测试文件失败");
+                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+                return response;
+            }
+        }
+
+        response.setSuccess(true);
         return response;
     }
 }

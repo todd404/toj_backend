@@ -1,5 +1,6 @@
 package com.example.toj.service.storage;
 
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -40,20 +41,26 @@ public class TempFileStorageService implements StorageService{
     public void copyToAvatar(String fileUuid, String outputId) throws IOException {
         File input = new File("temp/" + fileUuid);
 
-
         BufferedImage bufferedImage = ImageIO.read(input.getAbsoluteFile());
         File outputFile = new File("D:/toj/avatar/" + outputId + ".png");
         ImageIO.write(bufferedImage, "PNG", outputFile);
+        input.delete();
     }
 
-    public void copyToTest(String fileUuid, String outputId){
+    public void copyToTest(String fileUuid, Integer outputId) throws IOException {
         File input = new File("temp/" + fileUuid);
 
-        try {
-            File outputFile = new File("D:/toj/test/" + outputId + ".txt");
-            Files.copy(input.toPath(), outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+
+        File outputFile = new File("D:/toj/test/%d.txt".formatted(outputId));
+        Files.move(input.toPath(), outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+    }
+
+    public void copyToAnswer(String fileUuid, Integer outputId) throws IOException {
+        File input = new File("temp/" + fileUuid);
+
+
+        File outputFile = new File("D:/toj/answer/%d.txt".formatted(outputId));
+        Files.move(input.toPath(), outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
     }
 }
