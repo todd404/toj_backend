@@ -4,6 +4,7 @@ import com.example.toj.pojo.Comment;
 import com.example.toj.pojo.ParentComment;
 import com.example.toj.pojo.SubComment;
 import com.example.toj.pojo.User;
+import com.example.toj.pojo.response.object.MessageItem;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -41,6 +42,11 @@ public interface CommentMapper {
             """)
     List<SubComment> querySubComment(@Param("parentId") Integer parentId);
 
+    @Insert("insert into comment (user_id, problem_id, parent_id, content, is_read) " +
+            "VALUES (#{userId}, #{problemId}, #{parentId}, #{content}, false)")
+    @Options(keyProperty = "id", useGeneratedKeys = true)
+    Integer insertComment(Comment comment);
+
     @Update("update comment_like set is_like = #{isLike} where comment_id = #{commentId} and user_id = #{user.id}")
     Integer updateCommentLike(@Param("commentId") Integer commentId,
                               @Param("user") User user,
@@ -54,8 +60,11 @@ public interface CommentMapper {
     @Select("select sum(is_like) from comment_like where comment_id = #{commentId}")
     Integer queryCommentLikeCount(@Param("commentId") Integer commentId);
 
-    @Insert("insert into comment (user_id, problem_id, parent_id, content, is_read) " +
-            "VALUES (#{userId}, #{problemId}, #{parentId}, #{content}, false)")
-    @Options(keyProperty = "id", useGeneratedKeys = true)
-    Integer insertComment(Comment comment);
+    @Select("""
+            select c.*, p.title from comment as c
+            left join problem as p on p.id = c.problem_id
+            where parent_id in (select id from comment where user_id = #{userId} and parent_id = 0)
+            and is_read = false;
+            """)
+    List<MessageItem> queryNoReadMessages(@Param("userId") Integer userId);
 }

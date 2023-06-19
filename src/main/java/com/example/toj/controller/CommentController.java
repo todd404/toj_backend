@@ -3,10 +3,7 @@ package com.example.toj.controller;
 import com.example.toj.pojo.User;
 import com.example.toj.pojo.request.commentRequest.CommentLikeRequest;
 import com.example.toj.pojo.request.commentRequest.SubmitCommentRequest;
-import com.example.toj.pojo.response.commentResponse.CommentLikeResponse;
-import com.example.toj.pojo.response.commentResponse.CommentsResponse;
-import com.example.toj.pojo.response.commentResponse.SubCommentResponse;
-import com.example.toj.pojo.response.commentResponse.SubmitCommentResponse;
+import com.example.toj.pojo.response.commentResponse.*;
 import com.example.toj.service.CommentService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,5 +58,19 @@ public class CommentController {
         }
 
         return commentService.likeComment(commentLikeRequest.getCommentId(), user, commentLikeRequest.getLike());
+    }
+
+    @GetMapping("/messages")
+    public MessagesResponse messages(HttpSession session)
+    {
+        User user = (User) session.getAttribute("user");
+        if(user == null){
+            MessagesResponse response = new MessagesResponse();
+            response.setSuccess(false);
+            response.setMessage("获取未读消息失败: 未登录");
+            return response;
+        }
+
+        return commentService.getMessages(user);
     }
 }

@@ -6,10 +6,8 @@ import com.example.toj.pojo.ParentComment;
 import com.example.toj.pojo.SubComment;
 import com.example.toj.pojo.User;
 import com.example.toj.pojo.request.commentRequest.SubmitCommentRequest;
-import com.example.toj.pojo.response.commentResponse.CommentLikeResponse;
-import com.example.toj.pojo.response.commentResponse.CommentsResponse;
-import com.example.toj.pojo.response.commentResponse.SubCommentResponse;
-import com.example.toj.pojo.response.commentResponse.SubmitCommentResponse;
+import com.example.toj.pojo.response.commentResponse.*;
+import com.example.toj.pojo.response.object.MessageItem;
 import com.example.toj.pojo.response.object.SubmitCommentData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -95,6 +93,22 @@ public class CommentService {
         Integer count = commentMapper.queryCommentLikeCount(commentId);
         response.setSuccess(true);
         response.setCount(count);
+
+        return response;
+    }
+
+    public MessagesResponse getMessages(User user){
+        MessagesResponse response = new MessagesResponse();
+        List<MessageItem> messageItems = commentMapper.queryNoReadMessages(user.getId());
+
+        if(messageItems == null){
+            response.setMessage("获取未读消息错误: 未知错误");
+            response.setSuccess(false);
+            return response;
+        }
+
+        response.setMessages(messageItems);
+        response.setSuccess(true);
 
         return response;
     }
