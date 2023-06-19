@@ -4,12 +4,15 @@ import com.example.toj.mapper.UserMapper;
 import com.example.toj.pojo.User;
 import com.example.toj.pojo.request.userRequset.EditUserInfoRequest;
 import com.example.toj.pojo.response.BaseResponse;
+import com.example.toj.pojo.response.userResponse.UserListResponse;
+import com.example.toj.pojo.response.userResponse.UsernameResponse;
 import com.example.toj.service.storage.TempFileStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.List;
 
 @Service
 public class UserService {
@@ -70,6 +73,52 @@ public class UserService {
             response.setMessage(message.trim());
         }
 
+        return response;
+    }
+
+    public UsernameResponse adminGetUsernameById(Integer userId){
+        String username = userMapper.queryUsernameById(userId);
+
+        UsernameResponse response = new UsernameResponse();
+        if(username == null){
+            response.setSuccess(false);
+            response.setMessage("获取用户名失败: 未知错误");
+            return response;
+        }
+
+        response.setSuccess(true);
+        response.setUsername(username);
+
+        return response;
+    }
+
+    public UserListResponse adminGetUserList(){
+        List<User> userList = userMapper.queryAllUser();
+        UserListResponse response = new UserListResponse();
+
+        if(userList == null){
+            response.setSuccess(false);
+            response.setMessage("获取用户列表失败: 未知错误");
+            return response;
+        }
+
+        response.setUserList(userList);
+        response.setSuccess(true);
+
+        return response;
+    }
+
+    public BaseResponse adminEditUser(User userInfo){
+        Integer result = userMapper.updateUser(userInfo);
+        BaseResponse response = new BaseResponse();
+
+        if(result == null || result == 0){
+            response.setSuccess(false);
+            response.setMessage("修改用户信息失败: 未知原因");
+            return response;
+        }
+
+        response.setSuccess(true);
         return response;
     }
 }

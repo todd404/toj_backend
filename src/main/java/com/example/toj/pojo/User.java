@@ -1,9 +1,14 @@
 package com.example.toj.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class User {
+    @JsonProperty("userid")
     private Integer id = -1;
     private String username = "";
     private String password = "";
+    @JsonIgnore
     private Boolean isAdmin = false;
 
     public Integer getId() {
@@ -22,6 +27,7 @@ public class User {
         this.username = username;
     }
 
+    @JsonIgnore
     public String getPassword() {
         return password;
     }

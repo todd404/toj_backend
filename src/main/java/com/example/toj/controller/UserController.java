@@ -4,8 +4,10 @@ import com.example.toj.pojo.User;
 import com.example.toj.pojo.request.userRequset.AccountRequest;
 import com.example.toj.pojo.request.userRequset.EditUserInfoRequest;
 import com.example.toj.pojo.response.BaseResponse;
-import com.example.toj.pojo.response.UserInfoResponse;
+import com.example.toj.pojo.response.userResponse.UserInfoResponse;
 import com.example.toj.pojo.response.object.UserInfo;
+import com.example.toj.pojo.response.userResponse.UserListResponse;
+import com.example.toj.pojo.response.userResponse.UsernameResponse;
 import com.example.toj.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -100,5 +102,48 @@ public class UserController {
         }else{
             return new BaseResponse(false, "未登录！");
         }
+    }
+
+    //=👇=Admin=👇=//
+    @GetMapping("/username")
+    public UsernameResponse adminUsername(@RequestParam("userid") Integer userId,
+                                          HttpSession session)
+    {
+        User user = (User) session.getAttribute("user");
+        if(user == null || !user.getAdmin()){
+            UsernameResponse response = new UsernameResponse();
+            response.setSuccess(false);
+            response.setMessage("获取用户名失败: 请登录管理员账户");
+            return response;
+        }
+
+        return userService.adminGetUsernameById(userId);
+    }
+
+    @GetMapping("/userlist")
+    public UserListResponse adminUserList(HttpSession session){
+        User user = (User) session.getAttribute("user");
+
+        if(user == null || !user.getAdmin()){
+            UserListResponse response = new UserListResponse();
+            response.setSuccess(false);
+            response.setMessage("获取列表: 请登录管理员账户");
+            return response;
+        }
+
+        return userService.adminGetUserList();
+    }
+
+    @PostMapping("/edit-user")
+    public BaseResponse adminEditUser(@RequestBody User userInfo,
+                                      HttpSession session)
+    {
+        User user = (User) session.getAttribute("user");
+
+        if(user == null || !user.getAdmin()){
+            return new BaseResponse(false, "修改用户信息失败: 请登录管理员账户");
+        }
+
+        return userService.adminEditUser(userInfo);
     }
 }
