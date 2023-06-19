@@ -37,16 +37,23 @@ public class TempFileStorageService implements StorageService{
         }
     }
 
-    public void copyToAvatar(String fileUuid, String outputId){
+    public void copyToAvatar(String fileUuid, String outputId) throws IOException {
+        File input = new File("temp/" + fileUuid);
+
+
+        BufferedImage bufferedImage = ImageIO.read(input.getAbsoluteFile());
+        File outputFile = new File("D:/toj/avatar/" + outputId + ".png");
+        ImageIO.write(bufferedImage, "PNG", outputFile);
+    }
+
+    public void copyToTest(String fileUuid, String outputId){
         File input = new File("temp/" + fileUuid);
 
         try {
-            BufferedImage bufferedImage = ImageIO.read(input.getAbsoluteFile());
-            File outputFile = new File("D:/toj/avatar/" + outputId + ".png");
-            ImageIO.write(bufferedImage, "PNG", outputFile);
+            File outputFile = new File("D:/toj/test/" + outputId + ".txt");
+            Files.copy(input.toPath(), outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
 }
