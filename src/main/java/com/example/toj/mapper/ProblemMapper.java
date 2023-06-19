@@ -4,6 +4,7 @@ import com.example.toj.pojo.History;
 import com.example.toj.pojo.PassRate;
 import com.example.toj.pojo.Problem;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
@@ -13,14 +14,21 @@ import java.util.List;
 public interface ProblemMapper {
 
     @Select("select * from problem where id > 0")
-    List<Problem> getAllProblems();
+    List<Problem> queryAllProblems();
 
     @Select("select * from problem where id = #{problemId} and id > 0")
-    Problem getProblem(@Param("problemId") Integer problemId);
+    Problem queryProblem(@Param("problemId") Integer problemId);
 
     @Select("select * from history where user_id=#{userId} and result=\"通过\" and id > 0")
-    List<History> getUserPassedHistory(@Param("userId") Integer userId);
+    List<History> queryUserPassedHistory(@Param("userId") Integer userId);
 
     @Select("select problem_id, sum(result=\"通过\") / count(*) as pass_rate from history group by problem_id")
-    List<PassRate> getAllProblemPassRate();
+    List<PassRate> queryAllProblemPassRate();
+
+    @Select("""
+            select id, user_id, problem_id, language, execute_time, memory, result, created_at from history
+            where problem_id = #{problemId} and user_id = #{userId}
+            """)
+    List<History> querySubmitHistory(@Param("problemId") Integer problemId,
+                                     @Param("userId") Integer userId);
 }
