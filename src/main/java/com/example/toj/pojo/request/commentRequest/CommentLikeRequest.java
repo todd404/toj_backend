@@ -1,4 +1,4 @@
-package com.example.toj.pojo.request;
+package com.example.toj.pojo.request.commentRequest;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

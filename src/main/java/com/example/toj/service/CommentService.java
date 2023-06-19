@@ -1,12 +1,16 @@
 package com.example.toj.service;
 
 import com.example.toj.mapper.CommentMapper;
+import com.example.toj.pojo.Comment;
 import com.example.toj.pojo.ParentComment;
 import com.example.toj.pojo.SubComment;
 import com.example.toj.pojo.User;
-import com.example.toj.pojo.response.CommentLikeResponse;
-import com.example.toj.pojo.response.CommentsResponse;
-import com.example.toj.pojo.response.SubCommentResponse;
+import com.example.toj.pojo.request.commentRequest.SubmitCommentRequest;
+import com.example.toj.pojo.response.commentResponse.CommentLikeResponse;
+import com.example.toj.pojo.response.commentResponse.CommentsResponse;
+import com.example.toj.pojo.response.commentResponse.SubCommentResponse;
+import com.example.toj.pojo.response.commentResponse.SubmitCommentResponse;
+import com.example.toj.pojo.response.object.SubmitCommentData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,6 +51,30 @@ public class CommentService {
 
         response.setSuccess(true);
         response.setData(subComments);
+
+        return response;
+    }
+
+    public SubmitCommentResponse submitComment(SubmitCommentRequest submitCommentRequest, User user){
+        SubmitCommentResponse response = new SubmitCommentResponse();
+
+        Comment comment = new Comment();
+        comment.setUserId(user.getId());
+        comment.setProblemId(submitCommentRequest.getProblemId());
+        comment.setParentId(submitCommentRequest.getParentId());
+        comment.setContent(submitCommentRequest.getContent());
+        comment.setRead(false);
+
+        Integer result = commentMapper.insertComment(comment);
+        if(result == 0){
+            response.setSuccess(false);
+            response.setMessage("提交评论失败: 未知错误");
+            return response;
+        }
+
+        SubmitCommentData data = new SubmitCommentData(comment.getParentId(), comment.getId());
+        response.setData(data);
+        response.setSuccess(true);
 
         return response;
     }

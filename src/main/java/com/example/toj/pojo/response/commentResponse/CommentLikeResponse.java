@@ -1,6 +1,8 @@
-package com.example.toj.pojo.response;
+package com.example.toj.pojo.response.commentResponse;
 
-public class CommentLikeResponse extends BaseResponse{
+import com.example.toj.pojo.response.BaseResponse;
+
+public class CommentLikeResponse extends BaseResponse {
     Integer count = 0;
 
     public CommentLikeResponse(){

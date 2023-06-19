@@ -1,4 +1,4 @@
-package com.example.toj.pojo.request;
+package com.example.toj.pojo.request.userRequset;
 
 public class AccountRequest {
     private String username = "";

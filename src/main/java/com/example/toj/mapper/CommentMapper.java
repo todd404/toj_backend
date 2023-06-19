@@ -1,5 +1,6 @@
 package com.example.toj.mapper;
 
+import com.example.toj.pojo.Comment;
 import com.example.toj.pojo.ParentComment;
 import com.example.toj.pojo.SubComment;
 import com.example.toj.pojo.User;
@@ -52,4 +53,8 @@ public interface CommentMapper {
 
     @Select("select sum(is_like) from comment_like where comment_id = #{commentId}")
     Integer queryCommentLikeCount(@Param("commentId") Integer commentId);
+
+    @Insert("insert into comment (user_id, problem_id, parent_id, content, is_read) " +
+            "VALUES (#{userId}, #{problemId}, #{parentId}, #{content}, false)")
+    Integer insertComment(Comment comment);
 }
