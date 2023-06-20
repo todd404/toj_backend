@@ -14,7 +14,7 @@ public class History {
     @JsonIgnore
     private String code = "";
     @JsonProperty("execute_time")
-    private Integer executeTime = -1;
+    private Double executeTime = -1.0;
     private Integer memory = -1;
     @JsonProperty("status")
     private String result = "";
@@ -61,11 +61,11 @@ public class History {
         this.code = code;
     }
 
-    public Integer getExecuteTime() {
+    public Double getExecuteTime() {
         return executeTime;
     }
 
-    public void setExecuteTime(Integer executeTime) {
+    public void setExecuteTime(Double executeTime) {
         this.executeTime = executeTime;
     }
 

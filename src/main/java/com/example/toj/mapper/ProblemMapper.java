@@ -33,8 +33,18 @@ public interface ProblemMapper {
     @Options(useGeneratedKeys = true, keyProperty = "id")
     Integer insertProblem(Problem problem);
 
+    @Insert("""
+        insert into history (user_id, problem_id, language, code, execute_time, memory, result)
+        values (#{userId}, #{problemId}, #{language}, #{code}, #{executeTime}, #{memory}, #{result})
+        """)
+    @Options(useGeneratedKeys = true, keyProperty = "id")
+    Integer insertHistory(History history);
+
     @Update("update problem set title=#{title}, content=#{content}, difficulty=#{difficulty} where id = #{id}")
     Integer updateProblem(Problem problem);
+
+    @Update("update history set result=#{result}, execute_time=#{executeTime}, memory=#{memory} where id = #{id}")
+    Integer updateHistory(History history);
 
     @Delete("delete from problem where id=#{id}")
     Integer deleteProblem(@Param("id") Integer id);
