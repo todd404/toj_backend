@@ -131,4 +131,18 @@ public class UserService {
         response.setSuccess(true);
         return response;
     }
+
+    public BaseResponse adminDeleteUser(Integer userId){
+        Integer result = userMapper.deleteUser(userId);
+        BaseResponse response = new BaseResponse();
+
+        if(result == null || result == 0){
+            response.setSuccess(false);
+            response.setMessage("删除用户失败: 未知原因");
+            return response;
+        }
+
+        response.setSuccess(true);
+        return response;
+    }
 }

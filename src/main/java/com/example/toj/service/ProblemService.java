@@ -157,4 +157,18 @@ public class ProblemService {
         response.setSuccess(true);
         return response;
     }
+
+    public BaseResponse adminDeleteProblem(Integer problemId){
+        Integer result = problemMapper.deleteProblem(problemId);
+        BaseResponse response = new BaseResponse();
+
+        if(result == null || result == 0){
+            response.setSuccess(false);
+            response.setMessage("删除问题失败: 未知原因");
+            return response;
+        }
+
+        response.setSuccess(true);
+        return response;
+    }
 }

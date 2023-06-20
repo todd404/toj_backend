@@ -74,4 +74,17 @@ public class ProblemController {
 
         return problemService.adminEditProblem(problem);
     }
+
+    @GetMapping("delete-problem")
+    public BaseResponse adminDeleteProblem(@RequestParam("id") Integer problemId,
+                                           HttpSession session)
+    {
+        User user = (User) session.getAttribute("user");
+
+        if(user == null || !user.getAdmin()){
+            return new BaseResponse(false, "删除问题失败: 请登录管理员账户");
+        }
+
+        return problemService.adminDeleteProblem(problemId);
+    }
 }
