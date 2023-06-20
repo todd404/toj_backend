@@ -49,7 +49,6 @@ class UserTest {
 
     @Test
     void avatarCopyTest(){
-        String file_uuid = "75d7e38c-b4f1-4289-b94e-4cec89df5a7a.jpg";
-        String id = "2";
+
     }
 }

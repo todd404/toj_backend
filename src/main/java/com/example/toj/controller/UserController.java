@@ -146,4 +146,18 @@ public class UserController {
 
         return userService.adminEditUser(userInfo);
     }
+
+    @GetMapping("/delete-user")
+    public BaseResponse adminDeleteUser(@RequestParam("id") Integer userId,
+                                        HttpSession session)
+    {
+        User user = (User) session.getAttribute("user");
+
+        if(user == null || !user.getAdmin()){
+            return new BaseResponse(false, "删除用户失败: 请登录管理员账户");
+        }
+
+        return userService.adminDeleteUser(userId);
+    }
+
 }

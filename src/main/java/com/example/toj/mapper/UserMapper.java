@@ -29,4 +29,7 @@ public interface UserMapper {
 
     @Update("update user set username = #{username}, password = #{password} where id = #{id}")
     Integer updateUser(User user);
+
+    @Delete("delete from user where id = #{id}")
+    Integer deleteUser(@Param("id") Integer id);
 }

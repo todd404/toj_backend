@@ -35,4 +35,7 @@ public interface ProblemMapper {
 
     @Update("update problem set title=#{title}, content=#{content}, difficulty=#{difficulty} where id = #{id}")
     Integer updateProblem(Problem problem);
+
+    @Delete("delete from problem where id=#{id}")
+    Integer deleteProblem(@Param("id") Integer id);
 }
