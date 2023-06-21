@@ -1,6 +1,5 @@
 package com.example.toj.pojo.response.commentResponse;
 
-import com.example.toj.pojo.ParentComment;
 import com.example.toj.pojo.response.BaseResponse;
 import com.example.toj.pojo.response.object.MessageItem;
 
