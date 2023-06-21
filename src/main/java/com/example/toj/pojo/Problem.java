@@ -1,7 +1,5 @@
 package com.example.toj.pojo;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class Problem {
     private Integer id = 0;
     private String content = "";

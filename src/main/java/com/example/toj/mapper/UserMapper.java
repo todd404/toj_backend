@@ -4,7 +4,6 @@ import com.example.toj.pojo.User;
 import org.apache.ibatis.annotations.*;
 import org.springframework.dao.DataAccessException;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 @Mapper

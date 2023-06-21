@@ -19,10 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.web.client.RestTemplate;
 
-import java.beans.Transient;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -67,7 +64,7 @@ public class ProblemService {
         }
 
         for(var history : userPassedHistory){
-            var id = history.getId();
+            var id = history.getProblemId();
             ProblemSetItem item = problemSetItemMap.get(id);
 
             if(item != null){
@@ -86,9 +83,7 @@ public class ProblemService {
         }
 
         List<ProblemSetItem> problemSet = new ArrayList<>();
-        problemSetItemMap.forEach((key, value)->{
-            problemSet.add(value);
-        });
+        problemSetItemMap.forEach((key, value)-> problemSet.add(value));
 
         response.setProblemSetItemList(problemSet);
         response.setSuccess(true);
