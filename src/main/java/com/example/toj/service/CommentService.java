@@ -117,7 +117,7 @@ public class CommentService {
 
     public BaseResponse setCommentRead(Integer commentId, User user) {
         BaseResponse response = new BaseResponse();
-        //防止滥用该接口，导致可以其他用户设置本用户的已读
+        //防止滥用该接口，防止其他用户设置本用户的已读
         Boolean isUserNoReadFlag = false;
 
         List<MessageItem> messages = commentMapper.queryNoReadMessages(user.getId());

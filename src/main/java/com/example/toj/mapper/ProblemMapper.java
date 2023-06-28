@@ -16,6 +16,9 @@ public interface ProblemMapper {
     @Select("select * from problem where id = #{problemId} and id > 0")
     Problem queryProblem(@Param("problemId") Integer problemId);
 
+    @Select("select time_limit, memory_limit from problem where id = #{problemId} and id > 0")
+    Problem queryProblemLimit(@Param("problemId") Integer problemId);
+
     @Select("select * from history where user_id=#{userId} and result=\"通过\" and id > 0")
     List<History> queryUserPassedHistory(@Param("userId") Integer userId);
 
@@ -29,7 +32,8 @@ public interface ProblemMapper {
     List<History> querySubmitHistory(@Param("problemId") Integer problemId,
                                      @Param("userId") Integer userId);
 
-    @Insert("insert into problem (title, content, difficulty) values (#{title}, #{content}, #{difficulty})")
+    @Insert("insert into problem (title, content, difficulty, time_limit, memory_limit) " +
+            "values (#{title}, #{content}, #{difficulty}, #{timeLimit}, #{memoryLimit})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     Integer insertProblem(Problem problem);
 
@@ -40,7 +44,7 @@ public interface ProblemMapper {
     @Options(useGeneratedKeys = true, keyProperty = "id")
     Integer insertHistory(History history);
 
-    @Update("update problem set title=#{title}, content=#{content}, difficulty=#{difficulty} where id = #{id}")
+    @Update("update problem set title=#{title}, content=#{content}, difficulty=#{difficulty}, time_limit=#{timeLimit}, memory_limit=#{memoryLimit} where id = #{id}")
     Integer updateProblem(Problem problem);
 
     @Update("update history set result=#{result}, execute_time=#{executeTime}, memory=#{memory} where id = #{id}")

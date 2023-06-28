@@ -129,9 +129,16 @@ public class ProblemService {
         }
 
         judgeRequest.setHistoryId(history.getId());
-        //TODO: 问题添加运行时间、内存限制列
-        judgeRequest.setExecuteTime(5000.0);
-        judgeRequest.setMemory(20000);
+
+        Problem problemLimit = problemMapper.queryProblemLimit(judgeRequest.getProblemId());
+        if(problemLimit == null){
+            response.setSuccess(false);
+            response.setMessage("判题提交失败: 问题不存在");
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return response;
+        }
+        judgeRequest.setExecuteTime(problemLimit.getTimeLimit());
+        judgeRequest.setMemory(problemLimit.getMemoryLimit());
 
         RestTemplate restTemplate = new RestTemplate();
 
