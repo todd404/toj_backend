@@ -1,0 +1,15 @@
+{
+    "language_server_uri": "ws://localhost:3000/",
+    "language_list":[
+        {
+            "id": "cpp",
+            "name": "C++",
+            "rootUri": "file:///home/toddwu/lgs/ccls/data"
+        },
+        {
+            "id": "java",
+            "name": "JAVA",
+            "rootUri": "file:///home/toddwu/lgs/jdtls/"
+        }
+    ]
+}

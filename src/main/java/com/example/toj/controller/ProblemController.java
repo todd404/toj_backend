@@ -34,6 +34,11 @@ public class ProblemController {
         return problemService.getProblem(problemId);
     }
 
+    @GetMapping("/get-language-config")
+    public LanguageConfigResponse languageConfig(){
+        return problemService.getLanguageConfig();
+    }
+
     @GetMapping("/history")
     public HistoryResponse history(@RequestParam("problem_id") Integer problemId,
                                    HttpSession session)

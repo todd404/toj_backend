@@ -6,8 +6,8 @@ import com.example.toj.pojo.request.userRequset.EditUserInfoRequest;
 import com.example.toj.pojo.response.BaseResponse;
 import com.example.toj.pojo.response.userResponse.UserListResponse;
 import com.example.toj.pojo.response.userResponse.UsernameResponse;
-import com.example.toj.service.storage.TempFileStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -18,12 +18,13 @@ import java.util.List;
 @Service
 public class UserService {
     final UserMapper userMapper;
-    final TempFileStorageService tempFileStorageService;
+    final FileService fileService;
+
 
     @Autowired
-    public UserService(UserMapper userMapper, TempFileStorageService tempFileStorageService) {
+    public UserService(UserMapper userMapper, FileService fileService) {
         this.userMapper = userMapper;
-        this.tempFileStorageService = tempFileStorageService;
+        this.fileService = fileService;
     }
 
     public User login(String username, String password){
@@ -73,10 +74,17 @@ public class UserService {
             }
         }if(!request.getAvatarUuid().isEmpty()){
             try {
-                tempFileStorageService.copyToAvatar(request.getAvatarUuid(), String.valueOf(loginUser.getId()));
-            } catch (IOException e) {
+                String file_uuid = request.getAvatarUuid();
+                String file_name = String.valueOf(loginUser.getId());
+                var res = fileService.setAvatar(file_uuid, file_name);
+
+                if(!res.getSuccess()){
+                    throw new Exception(res.getMessage());
+                }
+            } catch (Exception e) {
                 resultSuccess = false;
                 resultMessage.append("修改头像失败!\n");
+                e.printStackTrace();
             }
             resultMessage.append("修改头像成功!\n");
         }

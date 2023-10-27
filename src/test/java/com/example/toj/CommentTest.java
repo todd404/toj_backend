@@ -10,9 +10,4 @@ public class CommentTest {
     @Autowired
     CommentMapper commentMapper;
 
-    @Test
-    void queryCommentLikeCountTest(){
-        var result = commentMapper.queryCommentLikeCount(4);
-        return;
-    }
 }

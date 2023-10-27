@@ -5,20 +5,25 @@ import com.example.toj.pojo.History;
 import com.example.toj.pojo.PassRate;
 import com.example.toj.pojo.Problem;
 import com.example.toj.pojo.User;
+import com.example.toj.pojo.config.JudgeServerConfig;
 import com.example.toj.pojo.request.problemRequest.JudgeReportRequest;
 import com.example.toj.pojo.request.problemRequest.JudgeRequest;
 import com.example.toj.pojo.request.problemRequest.ProblemRequest;
 import com.example.toj.pojo.response.BaseResponse;
 import com.example.toj.pojo.response.problemResponse.*;
 import com.example.toj.pojo.response.object.ProblemSetItem;
-import com.example.toj.service.storage.TempFileStorageService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,12 +34,15 @@ import java.util.Map;
 @Transactional
 public class ProblemService {
     final ProblemMapper problemMapper;
-    final TempFileStorageService tempFileStorageService;
+    final FileService fileService;
+
+    final JudgeServerConfig judgeServerConfig;
 
     @Autowired
-    public ProblemService(ProblemMapper problemMapper, TempFileStorageService tempFileStorageService) {
+    public ProblemService(ProblemMapper problemMapper, FileService fileService, JudgeServerConfig judgeServerConfig) {
         this.problemMapper = problemMapper;
-        this.tempFileStorageService = tempFileStorageService;
+        this.fileService = fileService;
+        this.judgeServerConfig = judgeServerConfig;
     }
 
     public ProblemResponse getProblem(Integer problemId){
@@ -91,6 +99,21 @@ public class ProblemService {
         return response;
     }
 
+    public LanguageConfigResponse getLanguageConfig(){
+        File jsonFile = null;
+        LanguageConfigResponse response = new LanguageConfigResponse();
+        try {
+            jsonFile = ResourceUtils.getFile("classpath:language_config.json");
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            response = objectMapper.readValue(jsonFile, LanguageConfigResponse.class);
+        } catch (IOException e) {
+            return response;
+        }
+
+        return response;
+    }
+
     public HistoryResponse getSubmitHistory(Integer problemId, User user){
         List<History> historyList = problemMapper.querySubmitHistory(problemId, user.getId());
         HistoryResponse response = new HistoryResponse();
@@ -143,7 +166,7 @@ public class ProblemService {
         RestTemplate restTemplate = new RestTemplate();
 
         HttpEntity<JudgeRequest> requestHttpEntity = new HttpEntity<>(judgeRequest);
-        response = restTemplate.postForObject("http://localhost/judge", requestHttpEntity, JudgeResponse.class);
+        response = restTemplate.postForObject("http://%s/judge".formatted(judgeServerConfig.getHost()), requestHttpEntity, JudgeResponse.class);
 
         if(response == null){
             response = new JudgeResponse();
@@ -157,7 +180,7 @@ public class ProblemService {
     }
 
     public StateResponse getState(String uuid){
-        String url = "http://localhost/state?uuid=" + uuid;
+        String url = "http://%s/state?uuid=".formatted(judgeServerConfig.getHost()) + uuid;
         RestTemplate restTemplate = new RestTemplate();
         return restTemplate.getForObject(url, StateResponse.class);
     }
@@ -189,11 +212,20 @@ public class ProblemService {
         }
 
         try{
-            tempFileStorageService.copyToTest(problemRequest.getTestFileUuid(), problemRequest.getId());
-            tempFileStorageService.copyToAnswer(problemRequest.getAnswerFileUuid(), problemRequest.getId());
-        } catch (IOException e) {
+            String test_file_uuid = problemRequest.getTestFileUuid();
+            String answer_file_uuid = problemRequest.getAnswerFileUuid();
+            String problem_id = String.valueOf(problemRequest.getId());
+
+            var res_test = fileService.setTest(test_file_uuid, problem_id);
+            var res_answer = fileService.setAnswer(answer_file_uuid, problem_id);
+
+            if(!res_test.getSuccess() || !res_answer.getSuccess()){
+                throw new Exception(res_test.getMessage() + " " + res_answer.getMessage());
+            }
+        } catch (Exception e) {
             response.setSuccess(false);
             response.setMessage("添加问题失败: 添加答案、测试文件失败");
+            e.printStackTrace();
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
             return response;
         }
@@ -213,11 +245,20 @@ public class ProblemService {
         }
         if(!problemRequest.getAnswerFileUuid().isEmpty() && !problemRequest.getTestFileUuid().isEmpty()){
             try{
-                tempFileStorageService.copyToTest(problemRequest.getTestFileUuid(), problemRequest.getId());
-                tempFileStorageService.copyToAnswer(problemRequest.getAnswerFileUuid(), problemRequest.getId());
-            } catch (IOException e) {
+                String test_file_uuid = problemRequest.getTestFileUuid();
+                String answer_file_uuid = problemRequest.getAnswerFileUuid();
+                String problem_id = String.valueOf(problemRequest.getId());
+
+                var res_test = fileService.setTest(test_file_uuid, problem_id);
+                var res_answer = fileService.setAnswer(answer_file_uuid, problem_id);
+
+                if(!res_test.getSuccess() || !res_answer.getSuccess()){
+                    throw new Exception(res_test.getMessage() + " " + res_answer.getMessage());
+                }
+            } catch (Exception e) {
                 response.setSuccess(false);
                 response.setMessage("编辑问题失败: 修改答案、测试文件失败");
+                e.printStackTrace();
                 TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                 return response;
             }
