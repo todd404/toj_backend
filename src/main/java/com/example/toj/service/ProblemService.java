@@ -13,8 +13,10 @@ import com.example.toj.pojo.response.BaseResponse;
 import com.example.toj.pojo.response.problemResponse.*;
 import com.example.toj.pojo.response.object.ProblemSetItem;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONException;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +27,6 @@ import org.springframework.web.client.RestTemplate;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +35,9 @@ import java.util.Map;
 @Service
 @Transactional
 public class ProblemService {
+    @Resource
+    private Environment environment;
+
     final ProblemMapper problemMapper;
     final FileService fileService;
 
@@ -101,9 +105,13 @@ public class ProblemService {
     }
 
     public LanguageConfigResponse getLanguageConfig(){
+        File jsonFile = null;
         LanguageConfigResponse response = new LanguageConfigResponse();
         try {
-            InputStream jsonFile = ClassLoader.getSystemClassLoader().getResourceAsStream("language_config.json");
+            String jsonFilePath = environment.getProperty("language-config-path", "");
+            jsonFilePath = jsonFilePath.isEmpty() ? "classpath:language_config.json" : jsonFilePath;
+
+            jsonFile = ResourceUtils.getFile(jsonFilePath);
 
             ObjectMapper objectMapper = new ObjectMapper();
             response = objectMapper.readValue(jsonFile, LanguageConfigResponse.class);

@@ -19,3 +19,6 @@ judge-server:
 file-service-server:
   address: localhost
   port: 7001
+
+language-config-path:
+  "classpath:language_config.json"
