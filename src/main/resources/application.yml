@@ -14,7 +14,7 @@ server:
 
 judge-server:
   address: localhost
-  port: 80
+  port: 7000
 
 file-service-server:
   address: localhost

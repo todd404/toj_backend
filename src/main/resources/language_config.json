@@ -4,12 +4,12 @@
         {
             "id": "cpp",
             "name": "C++",
-            "rootUri": "file:///home/toddwu/lgs/ccls/data"
+            "rootUri": "file:///lgs/ccls"
         },
         {
             "id": "java",
             "name": "JAVA",
-            "rootUri": "file:///home/toddwu/lgs/jdtls/"
+            "rootUri": "file:///lgs/jdtls"
         }
     ]
 }

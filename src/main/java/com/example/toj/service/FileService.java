@@ -1,7 +1,6 @@
 package com.example.toj.service;
 
 import com.example.toj.pojo.config.FileServiceServerConfig;
-import com.example.toj.pojo.config.JudgeServerConfig;
 import com.example.toj.pojo.response.BaseResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONException;

@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+/src/test/java/com/example/toj/mapper/
+/src/test/java/com/example/toj/CommentTest.java
+/src/test/java/com/example/toj/FileServiceTest.java
+/src/test/java/com/example/toj/JudgeServerConfigTest.java
+/src/test/java/com/example/toj/ProblemTest.java
+/src/test/java/com/example/toj/UserTest.java
