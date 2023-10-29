@@ -25,6 +25,7 @@ import org.springframework.web.client.RestTemplate;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -100,10 +101,9 @@ public class ProblemService {
     }
 
     public LanguageConfigResponse getLanguageConfig(){
-        File jsonFile = null;
         LanguageConfigResponse response = new LanguageConfigResponse();
         try {
-            jsonFile = ResourceUtils.getFile("classpath:language_config.json");
+            InputStream jsonFile = ClassLoader.getSystemClassLoader().getResourceAsStream("language_config.json");
 
             ObjectMapper objectMapper = new ObjectMapper();
             response = objectMapper.readValue(jsonFile, LanguageConfigResponse.class);
